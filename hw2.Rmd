@@ -1,0 +1,61 @@
+---
+title: "hw2"
+author: "Makenzie Barber"
+date: "2022-07-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#dataimport
+dim(shelter)
+library(dplyr)
+library(ggplot2)
+shelter <- read.csv("Desktop/BAS 474/shelter.csv")
+
+#datacleanup
+Outcometype <- as.factor(shelter$OutcomeType) %>%
+na.omit(Outcometype)
+SexUponOutcome <- as.factor(shelter$SexuponOutcome) %>%
+  na.omit()
+animaltype <- as.factor(shelter$AnimalType) %>%
+  na.omit()
+AgeUponOutcome <- as.factor(shelter$AgeuponOutcome) %>%
+  na.omit()
+
+#lubridate
+Date <- ymd_hms(shelter$DateTime, format = "%m/%d/%y")
+  order(Date)
+
+#figure1 
+ggplot(shelter, aes(x=animaltype)) +
+  geom_bar() + theme(plot.title = element_text(hjust = 0.5)) + theme_classic()+ theme(plot.subtitle =element_text(hjust = 0.5)) + theme(plot.caption = element_text(hjust = 0.5)) + labs(
+    title = " Count of Cats vs. Dogs",
+    caption = "Distinction of Animals in the shelter by species",
+    tag = "Figure 1",
+    x = "Species",
+    y = "Count of Species"
+)
+#figure2
+df <- data.frame(table(shelter$OutcomeType))
+ggbarplot(df, "Var1", "Freq",
+          fill = "orange",
+          xlab = FALSE,
+          label=TRUE,
+          lab.pos = "out")
+
+
+#figure3 mosaic
+associate(lm(animaltype~OutcomeType))
+
+#conditionals
+cond <- ifelse(shelter$OutcomeType == "Adoption", "Happy Ending", ifelse(shelter$OutcomeType== "Died", "Sad Ending", ifelse(shelter$OutcomeType == "Euthanasia", "Sad Ending", "Still a happy ending")))
+cond <- as.factor(cond)
+barplot(table(cond))
+df2<- data.frame(table(cond))
+ggbarplot(df2, cond, Freq)
+```
+
